@@ -49,6 +49,30 @@ cd build-ml-pipeline-for-short-term-rental-prices
 Commit and push to the repository often while you make progress towards the solution. Remember 
 to add meaningful commit messages.
 
+### Install appropiate WSL Ubuntu version
+In cmd
+```bash
+wsl -l -o
+wsl --install -d "Ubuntu-20.04"
+wsl -l -v
+```
+In Ubuntu console, check current version
+```bash
+lsb_release -a 
+```
+
+### Install miniconda on WSL
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod u+x Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh -b
+```
+Restart your terminal, if base environment is not activated, do it manually:
+```bash
+cd ~
+./miniconda/bin/conda init
+```
+
 ### Create environment
 Make sure to have conda installed and ready, then create a new environment using the ``environment.yml``
 file provided in the root of the repository and activate it:
