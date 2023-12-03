@@ -85,7 +85,11 @@ def go(config: DictConfig):
                     "output_type": "clean_sample",
                     "output_description": "Data with outliers and null values removed",
                     "min_price": config['etl']['min_price'],
-                    "max_price": config['etl']['max_price']
+                    "max_price": config['etl']['max_price'],
+                    "min_lat": config['etl']['min_lat'],
+                    "max_lat": config['etl']['max_lat'],
+                    "min_lon": config['etl']['min_lon'],
+                    "max_lon": config['etl']['max_lon']
                 },
             )
             logging.info("SUCCESS: Finished basic_cleaning step")
@@ -102,7 +106,11 @@ def go(config: DictConfig):
                     "ref": "clean_sample.csv:reference",
                     "kl_threshold": config['data_check']['kl_threshold'],
                     "min_price": config['etl']['min_price'],
-                    "max_price": config['etl']['max_price']
+                    "max_price": config['etl']['max_price'],
+                    "min_lat": config['etl']['min_lat'],
+                    "max_lat": config['etl']['max_lat'],
+                    "min_lon": config['etl']['min_lon'],
+                    "max_lon": config['etl']['max_lon']
                 },
             )
             logging.info("SUCCESS: Finished data_check step")

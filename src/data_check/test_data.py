@@ -42,11 +42,11 @@ def test_neighborhood_names(data):
     assert set(known_names) == set(neigh)
 
 
-def test_proper_boundaries(data: pd.DataFrame):
+def test_proper_boundaries(data: pd.DataFrame, min_lon, max_lon, min_lat, max_lat):
     """
     Test proper longitude and latitude boundaries for properties in and around NYC
     """
-    idx = data['longitude'].between(-74.25, -73.50) & data['latitude'].between(40.5, 41.2)
+    idx = data['longitude'].between(min_lon, max_lon) & data['latitude'].between(min_lat, max_lat)
 
     assert np.sum(~idx) == 0
 

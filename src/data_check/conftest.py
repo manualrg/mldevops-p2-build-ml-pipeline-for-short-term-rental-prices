@@ -9,6 +9,10 @@ def pytest_addoption(parser):
     parser.addoption("--kl_threshold", action="store")
     parser.addoption("--min_price", action="store")
     parser.addoption("--max_price", action="store")
+    parser.addoption("--min_lat", action="store")
+    parser.addoption("--max_lat", action="store")
+    parser.addoption("--min_lon", action="store")
+    parser.addoption("--max_lon", action="store")
 
 
 @pytest.fixture(scope='session')
@@ -69,3 +73,40 @@ def max_price(request):
         pytest.fail("You must provide max_price")
 
     return float(max_price)
+
+@pytest.fixture(scope='session')
+def min_lat(request):
+    min_lat = request.config.option.min_lat
+
+    if min_lat is None:
+        pytest.fail("You must provide min_lat")
+
+    return float(min_lat)
+
+@pytest.fixture(scope='session')
+def max_lat(request):
+    max_lat = request.config.option.max_lat
+
+    if max_lat is None:
+        pytest.fail("You must provide max_lat")
+
+    return float(max_lat)
+
+@pytest.fixture(scope='session')
+def min_lon(request):
+    min_lon = request.config.option.min_lon
+
+    if min_lon is None:
+        pytest.fail("You must provide min_lon")
+
+    return float(min_lon)
+
+
+@pytest.fixture(scope='session')
+def max_lon(request):
+    max_lon = request.config.option.max_lon
+
+    if max_lon is None:
+        pytest.fail("You must provide max_lon")
+
+    return float(max_lon)

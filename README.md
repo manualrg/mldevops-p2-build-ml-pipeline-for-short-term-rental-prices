@@ -625,3 +625,14 @@ mlflow run . -P steps=download,basic_cleaning,data_check,train_val_test_split,tr
 ```
 ## W&B prod model linage
 ![WNB Linage](images/wnb_graph.png "wnb image")
+
+```bash
+mlflow run https://github.com/manualrg/mldevops-p2-build-ml-pipeline-for-short-term-rental-prices.git \
+             -v  1.0.0 \
+             -P hydra_options="etl.sample='sample2.csv'"
+```
+
+```bash
+mlflow run . -P hydra_options="etl.sample='sample2.csv'" \
+   -P steps=download,basic_cleaning,data_check
+```

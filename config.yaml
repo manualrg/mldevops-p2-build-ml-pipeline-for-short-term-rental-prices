@@ -9,6 +9,10 @@ etl:
   sample: "sample1.csv"
   min_price: 10 # dollars
   max_price: 350 # dollars
+  min_lat: 40.5 # degrees
+  max_lat: 41.2 # degrees
+  min_lon: -74.25 # degrees
+  max_lon: -73.50 # degrees
 data_check:
   kl_threshold: 0.2
 modeling:

@@ -6,29 +6,44 @@ entry_points:
     parameters:
 
       input_artifact:
-        description: ## ADD DESCRIPTION
+        description: Raw dataset. Add WNB artifact version, e.g. latest
         type: string
 
       output_artifact:
-        description: ## ADD DESCRIPTION
+        description: Cleaned dataset. Add file extension, e.g. .csv
         type: string
 
       output_type:
-        description: ## ADD DESCRIPTION
+        description: Add an artifact type to WNB
         type: string
 
       output_description:
-        description: ## ADD DESCRIPTION
+        description: Add an artifact description to WNB
         type: string
 
       min_price:
-        description: ## ADD DESCRIPTION
+        description: Floor threshold ($)
         type: string
 
       max_price:
-        description: ## ADD DESCRIPTION
+        description: Cap threshold ($)
         type: string
 
+      min_lat:
+        description: Minimum latitude for NYC (deg)
+        type: string
+
+      max_lat:
+        description: Maximum latitude for NYC (deg)
+        type: string
+
+      min_lon:
+        description: Minimum longitude for NYC (deg)
+        type: string
+
+      max_lon:
+        description: Maximum longitude for NYC (deg)
+        type: string
 
     command: >-
-        python run.py  --input_artifact {input_artifact}  --output_artifact {output_artifact}  --output_type {output_type}  --output_description {output_description}  --min_price {min_price}  --max_price {max_price} 
+        python run.py  --input_artifact {input_artifact}  --output_artifact {output_artifact}  --output_type {output_type}  --output_description {output_description}  --min_price {min_price}  --max_price {max_price} --min_lat {min_lat}  --max_lat {max_lat} --min_lon {min_lon}  --max_lon {max_lon} 

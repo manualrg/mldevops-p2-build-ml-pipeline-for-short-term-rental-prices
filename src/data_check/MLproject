@@ -25,4 +25,20 @@ entry_points:
         description: Maximum accepted price
         type: float
 
-    command: "pytest . -vv --csv {csv} --ref {ref} --kl_threshold {kl_threshold} --min_price {min_price} --max_price {max_price}"
+      min_lat:
+        description: Minimum latitude for NYC (deg)
+        type: string
+
+      max_lat:
+        description: Maximum latitude for NYC (deg)
+        type: string
+
+      min_lon:
+        description: Minimum longitude for NYC (deg)
+        type: string
+
+      max_lon:
+        description: Maximum longitude for NYC (deg)
+        type: string
+
+    command: "pytest . -vv --csv {csv} --ref {ref} --kl_threshold {kl_threshold} --min_price {min_price} --max_price {max_price} --min_lat {min_lat}  --max_lat {max_lat} --min_lon {min_lon}  --max_lon {max_lon}"
