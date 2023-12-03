@@ -25,6 +25,10 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline, make_pipeline
 
 
+
+PATH_MODEL = "random_forest_dir"
+
+
 def delta_date_feature(dates):
     """
     Given a 2d array containing dates (in any format recognized by pd.to_datetime), it returns the delta in days
@@ -54,7 +58,7 @@ def go(args):
     ######################################
     # Use run.use_artifact(...).file() to get the train and validation artifact (args.trainval_artifact)
     # and save the returned path in train_local_pat
-    trainval_local_path = # YOUR CODE HERE
+    trainval_local_path = run.use_artifact(args.trainval_artifact).file()
     ######################################
 
     X = pd.read_csv(trainval_local_path)
@@ -75,7 +79,7 @@ def go(args):
 
     ######################################
     # Fit the pipeline sk_pipe by calling the .fit method on X_train and y_train
-    # YOUR CODE HERE
+    sk_pipe.fit(X_train, y_train)
     ######################################
 
     # Compute r2 and MAE
@@ -91,13 +95,21 @@ def go(args):
     logger.info("Exporting model")
 
     # Save model package in the MLFlow sklearn format
-    if os.path.exists("random_forest_dir"):
-        shutil.rmtree("random_forest_dir")
+    if os.path.exists(PATH_MODEL):
+        shutil.rmtree(PATH_MODEL)
 
     ######################################
     # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
     # HINT: use mlflow.sklearn.save_model
-    # YOUR CODE HERE
+    # Infer the signature of the model
+    signature = mlflow.models.infer_signature(X_val, y_pred)
+    mlflow.sklearn.save_model(
+            sk_pipe,
+            PATH_MODEL,
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
+            signature=signature,
+            input_example=X_val.iloc[:2],
+        )
     ######################################
 
     ######################################
@@ -106,7 +118,17 @@ def go(args):
     # type, provide a description and add rf_config as metadata. Then, use the .add_dir method of the artifact instance
     # you just created to add the "random_forest_dir" directory to the artifact, and finally use
     # run.log_artifact to log the artifact to the run
-    # YOUR CODE HERE
+    artifact = wandb.Artifact(
+        args.output_artifact,
+        type="model_export",
+        description="Serialized model instance as Mlflow model",
+        metadata={**rf_config, **{"max_tfidf_features":  args.max_tfidf_features, "random_state" : args.random_seed}}
+    )
+    artifact.add_dir(PATH_MODEL)
+    run.log_artifact(artifact)
+    # Make sure the artifact is uploaded before the temp dir
+    # gets deleted
+    artifact.wait()
     ######################################
 
     # Plot feature importance
@@ -116,7 +138,7 @@ def go(args):
     # Here we save r_squared under the "r2" key
     run.summary['r2'] = r_squared
     # Now log the variable "mae" under the key "mae".
-    # YOUR CODE HERE
+    run.summary['mae'] = mae
     ######################################
 
     # Upload to W&B the feture importance visualization
@@ -158,7 +180,10 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # Build a pipeline with two steps:
     # 1 - A SimpleImputer(strategy="most_frequent") to impute missing values
     # 2 - A OneHotEncoder() step to encode the variable
-    non_ordinal_categorical_preproc = # YOUR CODE HERE
+    non_ordinal_categorical_preproc = make_pipeline(
+        SimpleImputer(strategy="most_frequent"),
+        OneHotEncoder()
+    )
     ######################################
 
     # Let's impute the numerical columns to make sure we can handle missing values
@@ -202,7 +227,7 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
             ("non_ordinal_cat", non_ordinal_categorical_preproc, non_ordinal_categorical),
             ("impute_zero", zero_imputer, zero_imputed),
             ("transform_date", date_imputer, ["last_review"]),
-            ("transform_name", name_tfidf, ["name"])
+            ("transform_name", name_tfidf, ["name"])  
         ],
         remainder="drop",  # This drops the columns that we do not transform
     )
@@ -210,14 +235,17 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     processed_features = ordinal_categorical + non_ordinal_categorical + zero_imputed + ["last_review", "name"]
 
     # Create random forest
-    random_Forest = RandomForestRegressor(**rf_config)
+    random_forest = RandomForestRegressor(**rf_config)
 
     ######################################
     # Create the inference pipeline. The pipeline must have 2 steps: a step called "preprocessor" applying the
     # ColumnTransformer instance that we saved in the `preprocessor` variable, and a step called "random_forest"
     # with the random forest instance that we just saved in the `random_forest` variable.
     # HINT: Use the explicit Pipeline constructor so you can assign the names to the steps, do not use make_pipeline
-    sk_pipe = # YOUR CODE HERE
+    sk_pipe = Pipeline([
+        ("preprocessor", preprocessor),
+        ("random_forest", random_forest)
+    ])
 
     return sk_pipe, processed_features
 
