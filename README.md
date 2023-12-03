@@ -626,13 +626,27 @@ mlflow run . -P steps=download,basic_cleaning,data_check,train_val_test_split,tr
 ## W&B prod model linage
 ![WNB Linage](images/wnb_graph.png "wnb image")
 
+## Run a Release
 ```bash
 mlflow run https://github.com/manualrg/mldevops-p2-build-ml-pipeline-for-short-term-rental-prices.git \
              -v  1.0.0 \
              -P hydra_options="etl.sample='sample2.csv'"
 ```
 
+## Exersice: fix and rerun release
 ```bash
 mlflow run . -P hydra_options="etl.sample='sample2.csv'" \
    -P steps=download,basic_cleaning,data_check
 ```
+
+```bash
+mlflow run https://github.com/manualrg/mldevops-p2-build-ml-pipeline-for-short-term-rental-prices.git \
+             -v  1.0.1 \
+             -P hydra_options="etl.sample='sample2.csv'"
+```
+
+
+# Further Steps
+* Add Great Expectations data profiling and assertions
+* Add parallelization of training jobs  and bayesian hyperparameter search. Compute Cross validation statistics
+* It is difficult to unnit test and debug a single component, think of an unwrapped source code version (free from mlflow)
