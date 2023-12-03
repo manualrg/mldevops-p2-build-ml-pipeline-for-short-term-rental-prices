@@ -199,6 +199,9 @@ You can see the parameters that they require by looking into their `MLproject` f
 - `get_data`: downloads the data. [MLproject](https://github.com/udacity/build-ml-pipeline-for-short-term-rental-prices/blob/main/components/get_data/MLproject)
 - `train_val_test_split`: segrgate the data (splits the data) [MLproject](https://github.com/udacity/build-ml-pipeline-for-short-term-rental-prices/blob/main/components/train_val_test_split/MLproject)
 
+
+**_NOTE_**: As provided environments do not work, components are called from source directory instead of from provided repo
+
 ## In case of errors
 When you make an error writing your `conda.yml` file, you might end up with an environment for the pipeline or one
 of the components that is corrupted. Most of the time `mlflow` realizes that and creates a new one every time you try
@@ -219,6 +222,15 @@ If you are ok with that list, execute this command to clean them up:
 ```
 
 This will iterate over all the environments created by `mlflow` and remove them.
+
+## Check environments
+As there as several problems in mlflow version (cli or sdk invocation) a dummy step is built.
+Running this dummy step will ensure that a single component can be executed by the mlflow cli and also, that the main.py pipeline can be run (this pipeline is run by the mlflow cli, but also it will use the mlflow sdk)
+
+´´´bash
+mlflow run ./src/dummy/ -P parameter1=2 -P parameter2=20 -P parameter3="dummy"
+python tests/main.py 
+´´´
 
 
 ## Instructions
@@ -492,7 +504,7 @@ two other parameters (this is NOT the solution to this step):
 > mlflow run . \
   -P steps=train_random_forest \
   -P hydra_options="modeling.random_forest.max_depth=10,50,100 modeling.random_forest.n_estimators=100,200,500 -m"
-```
+``` 
 you can change this command line to accomplish your task.
 
 While running this simple experimentation is enough to complete this project, you can also explore more and see if 
@@ -591,3 +603,25 @@ you have trained your new model on the new data.
 ## License
 
 [License](LICENSE.txt)
+
+
+
+
+# Code
+## Run pipeline
+```bash
+mlflow run . -P steps=download,basic_cleaning,data_check,train_val_test_split,train_random_forest
+```
+
+## Run HPT job
+```bash
+> mlflow run . \
+  -P steps=train_random_forest \
+  -P hydra_options="modeling.max_tfidf_features=10,15,30 modeling.random_forest.max_features=0.1,0.33,0.5,0.75,1,'sqrt' -m"
+```
+
+```bash
+> mlflow run . -P steps=test_regression_model
+```
+## W&B prod model linage
+![WNB Linage](images/wnb_graph.png "wnb image")
